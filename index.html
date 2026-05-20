@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$BUGDOG — This Is Fine</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --fire: #ff4400;
+  --fire2: #ff8800;
+  --fire3: #ffcc00;
+  --bg: #060606;
+  --bg2: #0a0a0a;
+  --green: #33ff66;
+  --red: #ff4444;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  font-family: 'Share Tech Mono', monospace;
+  color: #fff;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ctext y='20' font-size='20'%3E🔥%3C/text%3E%3C/svg%3E") 12 12, auto;
+}
+
+/* SCANLINES */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* VIGNETTE */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%);
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ─── TICKER ─── */
+.ticker {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: var(--fire);
+  border-bottom: 2px solid var(--fire2);
+  padding: 5px 0;
+  overflow: hidden;
+  z-index: 1000;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  color: #000;
+}
+.ticker-inner {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 28s linear infinite;
+  padding-left: 100%;
+}
+@keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 30px; left: 0; right: 0;
+  z-index: 900;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 4vw;
+  background: rgba(6,6,6,0.85);
+  border-bottom: 1px solid #1a1a1a;
+  backdrop-filter: blur(10px);
+}
+.nav-logo {
+  font-family: 'VT323', monospace;
+  font-size: 1.8rem;
+  color: var(--fire);
+  text-shadow: 0 0 15px rgba(255,68,0,0.5);
+  letter-spacing: 2px;
+}
+.nav-links { display: flex; gap: 2.5rem; }
+.nav-links a {
+  color: #555;
+  text-decoration: none;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--fire); }
+
+/* ─── AMBIENT BLOBS ─── */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+  animation: blobdrift 10s ease-in-out infinite alternate;
+}
+.b1 { width:600px;height:600px;background:rgba(255,40,0,0.1);top:-150px;left:-150px; }
+.b2 { width:500px;height:500px;background:rgba(255,120,0,0.07);bottom:-100px;right:-100px;animation-delay:-5s; }
+.b3 { width:350px;height:350px;background:rgba(255,0,60,0.05);top:50%;left:40%;animation-delay:-3s; }
+@keyframes blobdrift { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(50px,40px) scale(1.15)} }
+
+/* ─── SPARKS LAYER ─── */
+#sparks { position:fixed;inset:0;pointer-events:none;z-index:500; }
+.spark {
+  position:absolute;width:4px;height:4px;border-radius:50%;
+  animation:sparkfly var(--d) ease-out forwards;
+}
+@keyframes sparkfly {
+  0%{opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}
+}
+
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 120px 6vw 60px;
+  gap: 4vw;
+  position: relative;
+  z-index: 10;
+}
+
+.hero-left {}
+
+.eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 8px;
+  color: var(--fire);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  animation: blink 2.5s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.logo-big {
+  font-family: 'VT323', monospace;
+  font-size: clamp(5rem, 9vw, 10rem);
+  line-height: 0.85;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(255,68,0,0.5), 0 0 80px rgba(255,30,0,0.2), 6px 6px 0 #cc2200, 10px 10px 0 #660f00;
+  animation: glitch 6s infinite;
+}
+.logo-accent { color: var(--fire); }
+
+@keyframes glitch {
+  0%,88%,100%{transform:translate(0);filter:none}
+  89%{transform:translate(-4px,2px);filter:hue-rotate(90deg)}
+  91%{transform:translate(4px,-2px);filter:hue-rotate(-90deg)}
+  93%{transform:translate(-2px,0);filter:none}
+  96%{transform:translate(2px,1px);filter:hue-rotate(30deg)}
+  98%{transform:translate(0);filter:none}
+}
+
+.hero-sub {
+  margin-top: 1.5rem;
+  font-size: 0.78rem;
+  color: #555;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  line-height: 2.2;
+}
+.hero-sub em { color: var(--fire2); font-style: normal; }
+
+.live-row {
+  display: flex;
+  gap: 3.5rem;
+  margin-top: 3rem;
+}
+.lstat { display: flex; flex-direction: column; gap: 5px; }
+.lstat-label { font-size: 0.58rem; letter-spacing: 4px; color: #333; text-transform: uppercase; }
+.lstat-val {
+  font-family: 'VT323', monospace;
+  font-size: 2.4rem;
+  color: var(--fire3);
+  text-shadow: 0 0 15px rgba(255,200,0,0.35);
+  line-height: 1;
+}
+.lstat-val.r { color: var(--red); text-shadow: 0 0 15px rgba(255,60,60,0.35); }
+.lstat-val.g { color: var(--green); text-shadow: 0 0 15px rgba(50,255,100,0.35); }
+
+/* ─── SCENE (RIGHT) ─── */
+.hero-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.scene {
+  position: relative;
+  width: 400px;
+  height: 480px;
+}
+
+.errors-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.err-popup {
+  position: absolute;
+  background: #000080;
+  border: 2px solid #c0c0c0;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  min-width: 155px;
+  box-shadow: 3px 3px 0 #000;
+  animation: popIn 0.2s ease-out, die var(--dur) ease-in forwards;
+  z-index: 30;
+}
+.err-popup .tb {
+  background: #000080;
+  border-bottom: 1px solid #555;
+  padding: 3px 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.58rem;
+}
+.err-popup .tb .xbtn {
+  background: #c0c0c0; color: #000;
+  width: 13px; height: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  border: 1px outset #fff;
+  cursor: pointer;
+  pointer-events: all;
+  flex-shrink: 0;
+}
+.err-popup .bd { padding: 5px 9px; line-height: 1.55; }
+@keyframes popIn { from{transform:scale(0.4);opacity:0} to{transform:scale(1);opacity:1} }
+@keyframes die { 0%{opacity:1} 65%{opacity:1} 100%{opacity:0;transform:translateY(-30px)} }
+
+.dog-wrap {
+  position: absolute;
+  bottom: 115px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: dogfloat 3.5s ease-in-out infinite;
+  cursor: pointer;
+  filter: drop-shadow(0 20px 50px rgba(255,80,0,0.45));
+  z-index: 10;
+}
+@keyframes dogfloat {
+  0%,100%{transform:translateX(-50%) translateY(0) rotate(-1deg)}
+  50%{transform:translateX(-50%) translateY(-18px) rotate(1.5deg)}
+}
+.dog-svg { width: 230px; height: 230px; }
+
+/* fire floor */
+.fire-floor {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 130px;
+  overflow: hidden;
+  z-index: 5;
+}
+.flame {
+  border-radius: 50% 50% 20% 20%;
+  transform-origin: bottom center;
+  animation: burn var(--fd) ease-in-out infinite alternate;
+  flex-shrink: 0;
+}
+@keyframes burn {
+  0%{transform:scaleX(1) scaleY(1) rotate(calc(var(--fr)*-1))}
+  100%{transform:scaleX(0.8) scaleY(1.18) rotate(var(--fr))}
+}
+
+/* ─── TERMINAL ─── */
+#terminal {
+  position: relative;
+  z-index: 10;
+  background: rgba(0,0,0,0.75);
+  border-top: 1px solid #111;
+  border-bottom: 1px solid #111;
+  padding: 3rem 6vw;
+}
+.term-head {
+  font-size: 0.58rem;
+  color: #2a2a2a;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.term-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 5rem;
+  font-size: 0.7rem;
+  line-height: 1.9;
+}
+.tl { display: flex; gap: 1ch; }
+.tl .k { color: #333; flex-shrink: 0; }
+.tl.e .v { color: #ff4444; }
+.tl.w .v { color: #ffcc00; }
+.tl.o .v { color: #44ff88; }
+.tl.i .v { color: #555; }
+.cur {
+  display: inline-block; width: 8px; height: 13px;
+  background: #33ff66; vertical-align: bottom;
+  animation: blink 1s step-end infinite;
+}
+
+/* ─── TOKENOMICS ─── */
+#tokenomics {
+  position: relative;
+  z-index: 10;
+  padding: 6rem 6vw;
+  text-align: center;
+}
+
+.section-label {
+  font-size: 0.6rem;
+  letter-spacing: 10px;
+  color: #333;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: 'VT323', monospace;
+  font-size: clamp(3rem, 6vw, 5rem);
+  color: var(--fire);
+  text-shadow: 0 0 30px rgba(255,68,0,0.3), 4px 4px 0 #7a1500;
+  margin-bottom: 3rem;
+}
+
+.diag-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #111;
+  border: 1px solid #111;
+  margin-bottom: 3rem;
+}
+.diag-item {
+  background: var(--bg);
+  padding: 2.2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+.diag-item:hover { background: #0c0c0c; }
+.diag-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--fire), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.diag-item:hover::after { opacity: 1; }
+.diag-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.diag-name {
+  font-size: 0.6rem;
+  letter-spacing: 5px;
+  color: #333;
+  text-transform: uppercase;
+}
+.diag-value {
+  font-family: 'VT323', monospace;
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--fire3);
+  text-shadow: 0 0 15px rgba(255,200,0,0.25);
+}
+.diag-value.red { color: var(--red); text-shadow: 0 0 15px rgba(255,60,60,0.25); }
+.diag-value.grn { color: var(--green); text-shadow: 0 0 15px rgba(50,255,100,0.25); }
+.diag-value.wht { color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.1); }
+.diag-bar-track {
+  height: 3px;
+  background: #111;
+  position: relative;
+  overflow: hidden;
+}
+.diag-bar-fill {
+  height: 100%;
+  position: relative;
+  animation: barload 1.5s cubic-bezier(0.16,1,0.3,1) forwards;
+  transform-origin: left;
+}
+@keyframes barload { from{width:0} }
+.diag-bar-fill::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 6px;
+  background: inherit;
+  filter: blur(4px);
+  opacity: 0.8;
+}
+.diag-sub {
+  font-size: 0.58rem;
+  color: #2a2a2a;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: -0.4rem;
+}
+
+.supply-line {
+  font-size: 0.65rem;
+  color: #333;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+.supply-line span { color: var(--fire2); }
+
+/* ─── WOOF SCANNER ─── */
+.scanner-wrap {
+  position: relative;
+  border: 1px solid #1a1a1a;
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--fire), var(--fire2), transparent);
+  box-shadow: 0 0 18px 4px rgba(255,68,0,0.35);
+  animation: scanmove 3.5s linear infinite;
+  z-index: 5;
+  pointer-events: none;
+}
+@keyframes scanmove {
+  0% { top: 0; opacity: 1; }
+  95% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.big-stat-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 3rem 4vw 2.5rem;
+  border-bottom: 1px solid #111;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.big-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 160px;
+}
+.big-stat-label {
+  font-size: 0.55rem;
+  letter-spacing: 8px;
+  color: #2a2a2a;
+  text-transform: uppercase;
+}
+.big-stat-val {
+  font-family: 'VT323', monospace;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  color: var(--fire3);
+  text-shadow: 0 0 20px rgba(255,200,0,0.3);
+  line-height: 1;
+  letter-spacing: 2px;
+}
+.big-stat-val.grn { color: var(--green); text-shadow: 0 0 20px rgba(50,255,100,0.3); }
+.big-stat-sub {
+  font-size: 0.55rem;
+  color: #2a2a2a;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.big-stat-divider {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, #222, transparent);
+  flex-shrink: 0;
+}
+.chaos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: #111;
+  border-top: 1px solid #111;
+}
+.chaos-card {
+  background: var(--bg);
+  padding: 1.8rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  transition: background 0.2s;
+}
+.chaos-card:hover { background: #0d0d0d; }
+.chaos-top {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.chaos-icon { font-size: 1.2rem; }
+.chaos-name {
+  font-size: 0.52rem;
+  letter-spacing: 4px;
+  color: #333;
+  text-transform: uppercase;
+  flex: 1;
+}
+.chaos-val {
+  font-family: 'VT323', monospace;
+  font-size: 1.6rem;
+  color: var(--fire3);
+  line-height: 1;
+}
+.chaos-val.red { color: var(--red); }
+.chaos-val.grn { color: var(--green); }
+.chaos-track {
+  height: 3px;
+  background: #111;
+  overflow: hidden;
+  position: relative;
+}
+.chaos-fill {
+  height: 100%;
+  transition: width 0.6s ease;
+  position: relative;
+}
+.chaos-fill::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 8px;
+  background: inherit;
+  filter: blur(5px);
+  opacity: 0.9;
+}
+.chaos-desc {
+  font-size: 0.52rem;
+  color: #222;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.quote-box {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #111;
+  background: var(--bg2);
+}
+.quote-cursor {
+  font-family: 'VT323', monospace;
+  font-size: 2rem;
+  color: var(--fire);
+  animation: blink 1.2s step-end infinite;
+  flex-shrink: 0;
+}
+.quote-text {
+  font-size: 0.68rem;
+  color: #333;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: opacity 0.4s;
+}
+
+/* ─── ROADMAP ─── */
+#roadmap {
+  position: relative;
+  z-index: 10;
+  padding: 4rem 6vw 6rem;
+}
+.road-items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #111;
+  border: 1px solid #111;
+  margin-top: 3rem;
+}
+.road-item {
+  background: var(--bg);
+  padding: 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.road-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--fire);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.road-item:hover::before { transform: scaleX(1); }
+.road-item.done::before { transform: scaleX(1); background: var(--green); }
+
+.road-phase {
+  font-size: 0.58rem;
+  color: #333;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.road-title {
+  font-family: 'VT323', monospace;
+  font-size: 2rem;
+  color: var(--fire);
+  margin-bottom: 1rem;
+}
+.road-item.done .road-title { color: var(--green); }
+.road-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.road-list li {
+  font-size: 0.65rem;
+  color: #555;
+  letter-spacing: 1px;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.road-list li::before { content: '›'; position: absolute; left: 0; color: var(--fire); }
+.road-item.done .road-list li::before { color: var(--green); }
+.road-list li.done-item { color: #777; text-decoration: line-through; }
+
+/* ─── THIS IS FINE ─── */
+#fine {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 6rem 6vw 8rem;
+  overflow: hidden;
+}
+.fine-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'VT323', monospace;
+  font-size: 20vw;
+  color: rgba(255,68,0,0.03);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: -2px;
+}
+.fine-main {
+  font-family: 'VT323', monospace;
+  font-size: clamp(4rem, 10vw, 9rem);
+  color: var(--fire);
+  text-shadow: 0 0 50px rgba(255,68,0,0.3), 5px 5px 0 #7a1500;
+  animation: fineshake 12s ease-in-out infinite;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+}
+@keyframes fineshake {
+  0%,92%,100%{transform:translate(0)}
+  93%{transform:translate(-4px,2px)}
+  95%{transform:translate(4px,-1px)}
+  97%{transform:translate(-1px,1px)}
+  99%{transform:translate(2px,-2px)}
+}
+.fine-sub {
+  font-size: 0.7rem;
+  color: #2a2a2a;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  position: relative;
+  z-index: 10;
+  border-top: 1px solid #0f0f0f;
+  padding: 2rem 6vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.58rem;
+  color: #222;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* ─── MARQUEE BOTTOM ─── */
+.marquee-bot {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: var(--bg);
+  border-top: 1px solid #111;
+  padding: 5px 0;
+  overflow: hidden;
+  font-size: 0.6rem;
+  color: #222;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.marquee-bot-inner {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 35s linear infinite;
+  padding-left: 100%;
+}
+</style>
+</head>
+<body>
+
+<div id="sparks"></div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    🔥 $BUGDOG +420.69% &nbsp;|&nbsp; SYSTEM ON FIRE &nbsp;|&nbsp; FATAL: BONE NOT FOUND &nbsp;|&nbsp; 🐕 WOW MUCH FIRE VERY CRYPTO &nbsp;|&nbsp; KERNEL PANIC: DOG IS ON FIRE &nbsp;|&nbsp; HOLDING AT 1000°C &nbsp;|&nbsp; ERROR 0x0000WOOF &nbsp;|&nbsp; npm ERR! cannot find module 'chill' &nbsp;|&nbsp; git commit -m "this is fine" &nbsp;|&nbsp; stack overflow: woof() recursion &nbsp;|&nbsp; 🔥 $BUGDOG +420.69%
+  </div>
+</div>
+
+<!-- BLOBS -->
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">$BUGDOG</div>
+  <div class="nav-links">
+    <a href="#hero">Home</a>
+    <a href="#terminal">System Log</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#fine">This Is Fine</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="eyebrow">⚠ critical system alert ⚠</div>
+    <div class="logo-big">$BUG<span class="logo-accent">DOG</span></div>
+    <div class="hero-sub">
+      the crypto that <em>doesn't panic</em><br>
+      while everything <em>burns around it</em><br>
+      <em>this is fine. 🔥</em>
+    </div>
+
+  </div>
+
+  <div class="hero-right">
+    <div class="scene">
+      <div class="errors-layer" id="errLayer"></div>
+      <div class="dog-wrap" id="dogWrap">
+        <svg class="dog-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Red glitch filter -->
+            <filter id="glitchRed" x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" result="noise" seed="2">
+                <animate attributeName="seed" values="2;8;3;11;2" dur="0.4s" repeatCount="indefinite"/>
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <!-- Evil red glow -->
+            <filter id="evilGlow">
+              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feFlood flood-color="#ff0000" flood-opacity="0.8" result="color"/>
+              <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+              <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <!-- Corrupt body filter -->
+            <filter id="corrupt">
+              <feTurbulence type="turbulence" baseFrequency="0.02 0.8" numOctaves="1" result="noise">
+                <animate attributeName="baseFrequency" values="0.02 0.8;0.04 0.9;0.01 0.7;0.02 0.8" dur="3s" repeatCount="indefinite"/>
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c9a030"/>
+              <stop offset="60%" stop-color="#a07820"/>
+              <stop offset="100%" stop-color="#7a5010"/>
+            </linearGradient>
+            <linearGradient id="eyeGlow" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ff3300"/>
+              <stop offset="100%" stop-color="#ff0066"/>
+            </linearGradient>
+          </defs>
+
+          <!-- RED AURA behind dog -->
+          <ellipse cx="100" cy="130" rx="70" ry="60" fill="none" stroke="#ff0000" stroke-width="1" opacity="0.15">
+            <animate attributeName="rx" values="70;75;68;72;70" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.15;0.3;0.1;0.25;0.15" dur="1.5s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="100" cy="130" rx="55" ry="48" fill="rgba(255,0,0,0.04)">
+            <animate attributeName="rx" values="55;60;52;57;55" dur="2.3s" repeatCount="indefinite"/>
+          </ellipse>
+
+          <!-- CORRUPT GHOST copies (glitch offset layers) -->
+          <g opacity="0.18" filter="url(#corrupt)">
+            <ellipse cx="104" cy="133" rx="52" ry="43" fill="#ff2200"/>
+            <circle cx="104" cy="84" r="40" fill="#ff2200"/>
+          </g>
+          <g opacity="0.12">
+            <ellipse cx="96" cy="135" rx="52" ry="43" fill="#00ffcc"/>
+            <circle cx="96" cy="86" r="40" fill="#00ffcc"/>
+          </g>
+
+          <!-- MAIN BODY -->
+          <g filter="url(#corrupt)">
+            <ellipse cx="100" cy="133" rx="52" ry="43" fill="url(#bodyGrad)"/>
+            <circle cx="100" cy="84" r="40" fill="url(#bodyGrad)"/>
+            <!-- Ears -->
+            <ellipse cx="67" cy="60" rx="15" ry="22" fill="#8a5c10" transform="rotate(-15 67 60)"/>
+            <ellipse cx="133" cy="60" rx="15" ry="22" fill="#8a5c10" transform="rotate(15 133 60)"/>
+            <ellipse cx="67" cy="63" rx="8" ry="14" fill="#4a2800" transform="rotate(-15 67 63)"/>
+            <ellipse cx="133" cy="63" rx="8" ry="14" fill="#4a2800" transform="rotate(15 133 63)"/>
+            <!-- Tail -->
+            <path d="M150 133 Q182 108 169 84" fill="none" stroke="#a07820" stroke-width="14" stroke-linecap="round"/>
+            <!-- Paws -->
+            <ellipse cx="72" cy="166" rx="17" ry="11" fill="#b08020"/>
+            <ellipse cx="128" cy="166" rx="17" ry="11" fill="#b08020"/>
+            <!-- Nose -->
+            <ellipse cx="100" cy="96" rx="7" ry="5" fill="#1a0a0a"/>
+            <ellipse cx="97" cy="97" rx="2" ry="1.5" fill="#2a0505"/>
+            <ellipse cx="103" cy="97" rx="2" ry="1.5" fill="#2a0505"/>
+            <!-- Mouth — grimace -->
+            <path d="M91 104 Q96 108 100 104 Q104 108 109 104" fill="none" stroke="#1a0a0a" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+
+          <!-- HORIZONTAL GLITCH SLICES — body corruption lines -->
+          <g id="glitchSlices">
+            <rect x="60" y="88" width="80" height="4" fill="#a07820" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;0.9;0;0;0;0;0.7;0" dur="2.7s" repeatCount="indefinite"/>
+              <animate attributeName="x" values="60;68;55;60" dur="2.7s" repeatCount="indefinite"/>
+            </rect>
+            <rect x="60" y="120" width="80" height="3" fill="#ff2200" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.8;0;0;0;0;0.6;0;0" dur="3.1s" repeatCount="indefinite"/>
+              <animate attributeName="x" values="60;52;65;60" dur="3.1s" repeatCount="indefinite"/>
+            </rect>
+            <rect x="60" y="104" width="80" height="2" fill="#00ffcc" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;0;0.5;0;0;0;0.4;0" dur="4s" repeatCount="indefinite"/>
+              <animate attributeName="x" values="60;70;50;60" dur="4s" repeatCount="indefinite"/>
+            </rect>
+          </g>
+
+          <!-- SCAN LINE passing over dog -->
+          <rect x="48" y="44" width="104" height="2" fill="rgba(255,0,0,0.5)" opacity="0.6">
+            <animate attributeName="y" values="44;190;44" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite"/>
+          </rect>
+
+          <!-- EYES — white sclera with red iris -->
+          <circle cx="85" cy="79" r="10" fill="#0a0000"/>
+          <circle cx="115" cy="79" r="10" fill="#0a0000"/>
+          <!-- red glow ring -->
+          <circle cx="85" cy="79" r="10" fill="none" stroke="#ff0000" stroke-width="1.5" opacity="0.6">
+            <animate attributeName="r" values="10;12;10" dur="1s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.6;1;0.6" dur="1s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="115" cy="79" r="10" fill="none" stroke="#ff0000" stroke-width="1.5" opacity="0.6">
+            <animate attributeName="r" values="10;12;10" dur="1s" repeatCount="indefinite" begin="0.1s"/>
+            <animate attributeName="opacity" values="0.6;1;0.6" dur="1s" repeatCount="indefinite" begin="0.1s"/>
+          </circle>
+          <!-- pupils — red glowing -->
+          <circle cx="87" cy="81" r="6" fill="url(#eyeGlow)" filter="url(#evilGlow)" id="eL"/>
+          <circle cx="117" cy="81" r="6" fill="url(#eyeGlow)" filter="url(#evilGlow)" id="eR"/>
+          <!-- eye shine -->
+          <circle cx="89" cy="78" r="2" fill="rgba(255,200,200,0.7)"/>
+          <circle cx="119" cy="78" r="2" fill="rgba(255,200,200,0.7)"/>
+
+          <!-- LAPTOP (corrupted) -->
+          <rect x="74" y="151" width="46" height="34" rx="5" fill="#0a0a0a" stroke="#ff2200" stroke-width="1.5"/>
+          <rect x="120" y="158" width="14" height="18" rx="7" fill="none" stroke="#ff2200" stroke-width="1.5" opacity="0.7"/>
+          <text x="97" y="172" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff0000" font-weight="bold">ERR</text>
+          <text x="97" y="172" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff4400" font-weight="bold" opacity="0">
+            ERR
+            <animate attributeName="opacity" values="0;0;0;1;0" dur="0.5s" repeatCount="indefinite"/>
+            <animate attributeName="x" values="97;101;93;97" dur="0.5s" repeatCount="indefinite"/>
+          </text>
+          <!-- cable wires -->
+          <path d="M84 151 Q80 141 84 131" fill="none" stroke="#ff2200" stroke-width="1.5" stroke-linecap="round" opacity="0.5">
+            <animate attributeName="d" values="M84 151 Q80 141 84 131;M84 151 Q88 141 84 131;M84 151 Q80 141 84 131" dur="2s" repeatCount="indefinite"/>
+          </path>
+          <path d="M97 151 Q93 139 97 127" fill="none" stroke="#ff2200" stroke-width="1.5" stroke-linecap="round" opacity="0.5">
+            <animate attributeName="d" values="M97 151 Q93 139 97 127;M97 151 Q101 139 97 127;M97 151 Q93 139 97 127" dur="2.4s" repeatCount="indefinite"/>
+          </path>
+
+          <!-- DATA CORRUPTION text fragments floating -->
+          <text x="30" y="70" font-family="monospace" font-size="6" fill="#ff0000" opacity="0">0xDEAD
+            <animate attributeName="opacity" values="0;0;0;0.7;0;0" dur="3.3s" repeatCount="indefinite"/>
+            <animate attributeName="x" values="30;26;34;30" dur="3.3s" repeatCount="indefinite"/>
+          </text>
+          <text x="148" y="110" font-family="monospace" font-size="6" fill="#ff0000" opacity="0">WOOF
+            <animate attributeName="opacity" values="0;0;0.6;0;0;0" dur="2.8s" repeatCount="indefinite"/>
+          </text>
+          <text x="35" y="130" font-family="monospace" font-size="5" fill="#00ffcc" opacity="0">ERR
+            <animate attributeName="opacity" values="0;0;0;0;0.5;0" dur="4.1s" repeatCount="indefinite"/>
+          </text>
+        </svg>
+      </div>
+      <div class="fire-floor" id="fireFloor"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL -->
+<div id="terminal">
+  <div class="term-head">// system log — live feed</div>
+  <div class="term-grid" id="termGrid">
+    <div id="col0">
+      <div class="tl e"><span class="k">[ERR]</span><span class="v">CRITICAL: kernel panic — dog.exe not syncing</span></div>
+      <div class="tl w"><span class="k">[WRN]</span><span class="v">fire_detected=TRUE, action=None</span></div>
+      <div class="tl o"><span class="k">[OK] </span><span class="v">sipping coffee... status: FINE</span></div>
+      <div class="tl e"><span class="k">[ERR]</span><span class="v">OutOfBonesException at 0x00DE4D0G</span></div>
+      <div class="tl i" id="c0"><span class="k">[SYS]</span><span class="v">_<span class="cur"></span></span></div>
+    </div>
+    <div id="col1">
+      <div class="tl e"><span class="k">[ERR]</span><span class="v">STOP 0x0000WOOF — dump at /dev/null</span></div>
+      <div class="tl w"><span class="k">[WRN]</span><span class="v">tail_wag_frequency exceeded safe limit</span></div>
+      <div class="tl o"><span class="k">[OK] </span><span class="v">blockchain: connected (barely)</span></div>
+      <div class="tl e"><span class="k">[ERR]</span><span class="v">npm ERR! cannot find module 'bone.js'</span></div>
+      <div class="tl i" id="c1"><span class="k">[SYS]</span><span class="v">_<span class="cur"></span></span></div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div style="text-align:center">
+    <div class="section-label">// the plan (it's fine)</div>
+    <div class="section-title">ROADMAP</div>
+  </div>
+  <div class="road-items">
+    <div class="road-item done">
+      <div class="road-phase">Phase 01</div>
+      <div class="road-title">IGNITION 🔥</div>
+      <ul class="road-list">
+        <li class="done-item">Deploy contract</li>
+        <li class="done-item">Website launched</li>
+        <li class="done-item">Dog sits in fire</li>
+        <li class="done-item">Community formed</li>
+      </ul>
+    </div>
+    <div class="road-item">
+      <div class="road-phase">Phase 02</div>
+      <div class="road-title">KERNEL PANIC</div>
+      <ul class="road-list">
+        <li>CEX listings</li>
+        <li>1000+ holders</li>
+        <li>Meme campaign</li>
+        <li>Coingecko listing</li>
+      </ul>
+    </div>
+    <div class="road-item">
+      <div class="road-phase">Phase 03</div>
+      <div class="road-title">THIS IS FINE</div>
+      <ul class="road-list">
+        <li>Major exchange</li>
+        <li>$BUGDOG merch</li>
+        <li>Dog NFT collection</li>
+        <li>World domination</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- THIS IS FINE -->
+<section id="fine">
+  <div class="fine-bg-text">WOOF</div>
+  <div class="fine-main" id="fineText">THIS IS FINE.</div>
+  <div class="fine-sub">🐕 &nbsp; the dog that holds through everything &nbsp; 🔥</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>$BUGDOG © 2024</span>
+  <span>not financial advice. the dog approves. 🐾</span>
+  <span>all errors reserved</span>
+</footer>
+
+<div class="marquee-bot">
+  <div class="marquee-bot-inner">
+    $BUGDOG &nbsp;|&nbsp; error 404: profit not found &nbsp;|&nbsp; kernel panic: moon not syncing &nbsp;|&nbsp; git push origin main --force &nbsp;|&nbsp; the fire is a feature, not a bug &nbsp;|&nbsp; woof() called woof() called woof() &nbsp;|&nbsp; HODL temperature: 1000°C &nbsp;|&nbsp; OutOfBonesException: line 69 &nbsp;|&nbsp; dog approved this message &nbsp;🐾
+  </div>
+</div>
+
+<script>
+// ── FIRE FLOOR ──
+const fireFloor = document.getElementById('fireFloor');
+const flameConfig = [
+  {w:12,h:32},{w:16,h:50},{w:20,h:68},{w:22,h:85},{w:20,h:75},
+  {w:24,h:95},{w:20,h:80},{w:22,h:88},{w:20,h:70},{w:18,h:60},
+  {w:22,h:90},{w:20,h:75},{w:18,h:55},{w:20,h:68},{w:22,h:82},
+  {w:18,h:50},{w:20,h:72},{w:16,h:45},{w:14,h:38},
+];
+const fireColors = ['#ff1100','#ff2200','#ff3300','#ff4400','#ff5500','#ff7700','#ff9900','#ffbb00','#ffdd00'];
+flameConfig.forEach((f, i) => {
+  const el = document.createElement('div');
+  el.className = 'flame';
+  const ci = Math.min(Math.floor((f.h / 95) * (fireColors.length - 1)), fireColors.length - 1);
+  const col = fireColors[ci];
+  const topCol = f.h > 70 ? '#fff9c4' : '#ffee88';
+  const rot = (Math.random() * 10 - 5).toFixed(1);
+  const dur = (0.55 + Math.random() * 0.45).toFixed(2);
+  const delay = (i * 0.06).toFixed(2);
+  el.style.cssText = `width:${f.w}px;height:${f.h}px;background:linear-gradient(to top,#ff0000,${col} 40%,${topCol});--fr:${rot}deg;--fd:${dur}s;animation-delay:${delay}s`;
+  fireFloor.appendChild(el);
+});
+
+// ── ERROR POPUPS ──
+const errLayer = document.getElementById('errLayer');
+const errMsgs = [
+  ['Fatal Error','dog.exe stopped responding'],
+  ['System Alert','🔥 fire detected\naction: ignore'],
+  ['BSOD','STOP: 0x0000WOOF\ndump saved to /dev/null'],
+  ['Kernel Panic','unable to mount /bone\nnot syncing'],
+  ['Runtime Error','OutOfBones: line 69'],
+  ['npm ERR!','Cannot find module\n\'bone.js\''],
+  ['Python','AttributeError:\n\'Dog\' no attr \'chill\''],
+  ['404 Not Found','Bone not found\ntry /park'],
+  ['Git Error','merge conflict:\nwoof vs WOOF'],
+  ['Stack Overflow','woof() called woof()\ncalled woof()...'],
+  ['Memory Leak','dogMemory: leaking\n(it\'s love)'],
+  ['Segfault','core dumped: too much wag'],
+  ['Timeout','dog.think() timed out\nretry? [Y/N]'],
+];
+
+function spawnErr() {
+  const [t, m] = errMsgs[~~(Math.random() * errMsgs.length)];
+  const el = document.createElement('div');
+  el.className = 'err-popup';
+  const dur = 3.5 + Math.random() * 2.5;
+  el.style.cssText = `left:${Math.random()*62-5}%;top:${Math.random()*60}%;--dur:${dur}s`;
+  el.innerHTML = `<div class="tb"><span>⚠ ${t}</span><span class="xbtn" onclick="this.closest('.err-popup').remove()">✕</span></div><div class="bd">${m.replace('\n','<br>')}</div>`;
+  errLayer.appendChild(el);
+  setTimeout(() => el.remove(), (dur + 0.5) * 1000);
+}
+setInterval(spawnErr, 1700);
+spawnErr(); setTimeout(spawnErr, 500); setTimeout(spawnErr, 1000);
+
+// ── EYE TRACKING ──
+const eL = document.getElementById('eL'), eR = document.getElementById('eR');
+const dogWrap = document.getElementById('dogWrap');
+document.addEventListener('mousemove', ev => {
+  const r = dogWrap.getBoundingClientRect();
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const dx = clamp((ev.clientX - cx)/14, -4.5, 4.5);
+  const dy = clamp((ev.clientY - cy)/14, -4, 4);
+  eL.setAttribute('cx', 87 + dx); eL.setAttribute('cy', 81 + dy);
+  eR.setAttribute('cx', 117 + dx); eR.setAttribute('cy', 81 + dy);
+});
+
+// ── SPARKS ──
+const sparksEl = document.getElementById('sparks');
+function spawnSparks(x, y, n) {
+  n = n || 16;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const a = Math.random() * Math.PI * 2;
+    const dist = 50 + Math.random() * 90;
+    const cols = ['#ff0000','#ff2200','#ff0066','#00ffcc','#ff4400','#ffcc00'];
+    s.style.cssText = `left:${x}px;top:${y}px;background:${cols[~~(Math.random()*cols.length)]};--dx:${Math.cos(a)*dist}px;--dy:${Math.sin(a)*dist-40}px;--d:${0.5+Math.random()*0.7}s;animation-delay:${Math.random()*0.1}s`;
+    sparksEl.appendChild(s);
+    setTimeout(() => s.remove(), 1400);
+  }
+}
+
+dogWrap.addEventListener('click', ev => {
+  const r = dogWrap.getBoundingClientRect();
+  spawnSparks(r.left + r.width/2, r.top + r.height/2, 35);
+  spawnErr(); spawnErr();
+  const msgs = ['MUCH WOW!','SUCH FIRE 🔥','VERY CRYPTO!','DOG APPROVES 🐾','WOOF!','THIS IS FINE.'];
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:35%;left:50%;transform:translate(-50%,-50%);background:#ff4400;color:#000;font-family:VT323,monospace;font-size:3.5rem;padding:0.4rem 2.5rem;pointer-events:none;z-index:9000;animation:die 1.8s forwards;--dur:1.8s';
+  toast.textContent = msgs[~~(Math.random()*msgs.length)];
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 1800);
+});
+
+document.addEventListener('click', ev => {
+  if (!ev.target.closest('#dogWrap') && !ev.target.closest('#fineText')) {
+    spawnSparks(ev.clientX, ev.clientY, 10);
+  }
+});
+
+// ── TERMINAL LIVE ──
+const lines = [
+  ['e','CRITICAL: moon.js has stopped working'],
+  ['w','fire_suppression.service: disabled'],
+  ['o','hodling: true (very true)'],
+  ['e','git push --force origin main'],
+  ['w','cpu_temp: 🔥🔥🔥 (nominal)'],
+  ['o','nft minted: dog_photo_#69420'],
+  ['e','EXCEPTION: TooMuchWag at 0xDEADBEEF'],
+  ['w','bone_supply: 0 (critical)'],
+  ['o','tail_wag: synchronized'],
+  ['e','AttributeError: market has no attr up'],
+  ['w','coffee_level: low — sending alert'],
+  ['o','connection: blockchain (barely)'],
+  ['e','OutOfBonesException: please refill /park'],
+  ['w','stack overflow: love recursion detected'],
+];
+const labels = {e:'[ERR]',w:'[WRN]',o:'[OK] ',i:'[INF]'};
+const cols2 = [document.getElementById('col0'), document.getElementById('col1')];
+const cursors = [document.getElementById('c0'), document.getElementById('c1')];
+let li = 0;
+setInterval(() => {
+  const ci = li % 2;
+  const [type, msg] = lines[~~(Math.random()*lines.length)];
+  const div = document.createElement('div');
+  div.className = `tl ${type}`;
+  div.innerHTML = `<span class="k">${labels[type]}</span><span class="v">${msg}</span>`;
+  cols2[ci].insertBefore(div, cursors[ci]);
+  while (cols2[ci].children.length > 8) cols2[ci].removeChild(cols2[ci].firstChild);
+  li++;
+}, 1900);
+
+// ── FINE TEXT ──
+const fineText = document.getElementById('fineText');
+const fines = ['THIS IS FINE.','EVERYTHING IS OK.','NO PANIC.','TOTALLY NORMAL.','THIS IS FINE. 🔥','WOOF.','SYSTEM: STABLE','HELP.','...FINE.'];
+fineText.addEventListener('click', ev => {
+  fineText.textContent = fines[~~(Math.random()*fines.length)];
+  spawnSparks(ev.clientX, ev.clientY, 25);
+  spawnErr();
+});
+</script>
+</body>
+</html>
